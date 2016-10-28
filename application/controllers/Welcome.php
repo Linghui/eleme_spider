@@ -1,0 +1,94 @@
+<?php
+
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Welcome extends CI_Controller
+{
+    /**
+     * Index Page for this controller.
+     *
+     * Maps to the following URL
+     * 		http://example.com/index.php/welcome
+     *	- or -
+     * 		http://example.com/index.php/welcome/index
+     *	- or -
+     * Since this controller is set as the default controller in
+     * config/routes.php, it's displayed at http://example.com/
+     *
+     * So any other public methods not prefixed with an underscore will
+     * map to /index.php/welcome/<method_name>
+     *
+     * @see http://codeigniter.com/user_guide/general/urls.html
+     */
+    public function fetch_restaurant()
+    {
+        $xy_set = array(
+            'shui' => 'latitude=41.79239&longitude=123.41845',
+            'men' => 'latitude=41.7915&longitude=123.38015',
+        );
+
+        $xy_key = 'shui';
+
+        $xy = $xy_set[$xy_key];
+
+        $limit = 20;
+        $offset = 0;
+
+        for ($index = 0; $index < 1000; ++$index) {
+            echo "page $index \n";
+            $of = $offset * $limit;
+            $url = "https://mainsite-restapi.ele.me/shopping/restaurants?$xy&offset=$of&limit=$limit&extras%5B%5D=activities&rand=".rand(0, 100000);
+            ++$offset;
+            echo "url:$url\n";
+            $content = $this->Curl_model->curl_get($url);
+            $restaurants = json_decode($content);
+            foreach ($restaurants as $one) {
+                echo 'deal with name : '.$one->name."\n";
+
+                $condition = array('id' => $one->id);
+
+                $query = $this->Restuarant_model->get_one_by_condition($condition);
+                if ($query) {
+                    echo 'name : '.$one->name;
+                    echo " added before\n";
+                    continue;
+                }
+
+                if (isset($one->recommend)) {
+                    $obj = json_decode($one->recommend->track);
+                    echo $obj->rankType;
+                    $one->rankType = $obj->rankType;
+                    if (isset($one->recommend->reason)) {
+                        $one->rankType_reason = $one->recommend->reason;
+                    }
+                    unset($one->recommend);
+                }
+
+                $keys = array(
+                    'activities',
+                    'piecewise_agent_fee',
+                    'supports',
+                    'delivery_mode',
+                    'activities',
+                    'closing_count_down',
+                );
+
+                foreach ($keys as $one_key) {
+                    if (isset($one->$one_key)) {
+                        $temp = json_encode($one->$one_key);
+                        $one->$one_key = $temp;
+                    }
+                }
+
+                $this->Restuarant_model->add($one);
+            }
+            echo 'dealed '.count($restaurants)."\n";
+            sleep(1);
+            echo "sleep 5s\n";
+            if (count($restaurants) < $limit) {
+                echo "over\n";
+                break;
+            }
+        }
+    }
+}
