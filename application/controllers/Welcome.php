@@ -22,6 +22,9 @@ class Welcome extends CI_Controller
      */
     public function fetch_restaurant()
     {
+        echo 'ok';
+
+        return;
         $xy_set = array(
             'shui' => 'latitude=41.79239&longitude=123.41845',
             'men' => 'latitude=41.7915&longitude=123.38015',
@@ -89,6 +92,75 @@ class Welcome extends CI_Controller
                 echo "over\n";
                 break;
             }
+        }
+    }
+
+    public function fetch_menu_and_food()
+    {
+        $restaurants = $this->Restuarant_model->get_by_condition(null, 'recent_order_num');
+
+        foreach ($restaurants as $one) {
+            echo $one->recent_order_num." n \n";
+
+            $id = $one->id;
+            $restaurant_name = $one->name;
+            $url = 'https://mainsite-restapi.ele.me/shopping/v1/menu?restaurant_id='.$id;
+            $content = $this->Curl_model->curl_get($url);
+
+            $menu_list = json_decode($content);
+            foreach ($menu_list as $one_menu) {
+                echo 'menu name '.$one_menu->name."\n";
+
+                $one_menu->restaurant_name = $restaurant_name;
+                $foods = $one_menu->foods;
+
+                foreach ($foods as $one_food) {
+                    echo 'food name '.$one_food->name."\n";
+
+                    $condition = array(
+                        'restaurant_id' => $id,
+                        'name' => $one_food->name,
+                    );
+
+                    $query = $this->Food_model->get_one_by_condition($condition);
+                    if ($query) {
+                        continue;
+                    }
+
+                    $keys = array(
+                        'limitation',
+                        'specifications',
+                        'specfoods',
+                        'display_times',
+                        'attributes',
+                    );
+
+                    foreach ($keys as $one_key) {
+                        if (isset($one_food->$one_key)) {
+                            $temp = json_encode($one_food->$one_key);
+                            $one_food->$one_key = $temp;
+                        }
+                    }
+
+                    $one_food->restaurant_name = $restaurant_name;
+
+                    $this->Food_model->add($one_food);
+                }
+
+                $keys = array(
+                                        'activity',
+                                    );
+
+                foreach ($keys as $one_key) {
+                    if (isset($one_menu->$one_key)) {
+                        $temp = json_encode($one_menu->$one_key);
+                        $one_menu->$one_key = $temp;
+                    }
+                }
+
+                $this->Menu_model->add($one_menu);
+            }
+            break;
         }
     }
 }

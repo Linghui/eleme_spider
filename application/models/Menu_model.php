@@ -1,10 +1,10 @@
 <?php
 
-class Restuarant_model extends CI_Model
+class Menu_model extends CI_Model
 {
     public function add($obj)
     {
-        $this->db->insert('restaurant', $obj);
+        $this->db->insert('menu', $obj);
 
         return $this->db->insert_id();
     }
@@ -18,7 +18,7 @@ class Restuarant_model extends CI_Model
         if ($order_column && $order) {
             $this->db->order_by($order_column, $order);
         }
-        $query = $this->db->get('restaurant');
+        $query = $this->db->get('menu');
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {
