@@ -160,7 +160,6 @@ class Welcome extends CI_Controller
 
                 $this->Menu_model->add($one_menu);
             }
-            break;
         }
     }
 }
