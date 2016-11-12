@@ -24,7 +24,6 @@ class Welcome extends CI_Controller
     {
         echo 'ok';
 
-        return;
         $xy_set = array(
             'shui' => 'latitude=41.79239&longitude=123.41845',
             'men' => 'latitude=41.7915&longitude=123.38015',
