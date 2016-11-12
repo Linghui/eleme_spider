@@ -85,8 +85,6 @@ class Welcome extends CI_Controller
                 $this->Restuarant_model->add($one);
             }
             echo 'dealed '.count($restaurants)."\n";
-            sleep(1);
-            echo "sleep 5s\n";
             if (count($restaurants) < $limit) {
                 echo "over\n";
                 break;
