@@ -30,7 +30,7 @@ class Welcome extends CI_Controller
             'men' => 'latitude=41.7915&longitude=123.38015',
         );
 
-        $xy_key = 'shui';
+        $xy_key = 'men';
 
         $xy = $xy_set[$xy_key];
 
