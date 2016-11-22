@@ -27,9 +27,10 @@ class Welcome extends CI_Controller
         $xy_set = array(
             'shui' => 'latitude=41.79239&longitude=123.41845',
             'men' => 'latitude=41.7915&longitude=123.38015',
+            'yongli' => 'latitude=39.93482&longitude=116.44474',
         );
 
-        $xy_key = 'men';
+        $xy_key = 'yongli';
 
         $xy = $xy_set[$xy_key];
 
@@ -66,12 +67,21 @@ class Welcome extends CI_Controller
                     unset($one->recommend);
                 }
 
+                if (isset($one->activities)) {
+                    $activities = '';
+                    foreach ($one->activities as $act) {
+                        $activities .= $act->description;
+                    }
+
+                    $one->activities = $activities;
+                }
+
                 $keys = array(
                     'activities',
                     'piecewise_agent_fee',
                     'supports',
                     'delivery_mode',
-                    'activities',
+                    // 'activities',
                     'closing_count_down',
                 );
 
@@ -127,7 +137,7 @@ class Welcome extends CI_Controller
                     $keys = array(
                         'limitation',
                         'specifications',
-                        'specfoods',
+                        // 'specfoods',
                         'display_times',
                         'attributes',
                     );
@@ -139,6 +149,12 @@ class Welcome extends CI_Controller
                         }
                     }
 
+                    //
+                    // if(){
+                    //
+                    // }
+
+                    $one_food->specfoods = $one_food->specfoods[0]->price;
                     $one_food->restaurant_name = $restaurant_name;
 
                     $this->Food_model->add($one_food);
