@@ -30,7 +30,7 @@ class Welcome extends CI_Controller
             'yongli' => 'latitude=39.93482&longitude=116.44474',
         );
 
-        $xy_key = 'yongli';
+        $xy_key = 'shui';
 
         $xy = $xy_set[$xy_key];
 
@@ -77,11 +77,10 @@ class Welcome extends CI_Controller
                 }
 
                 $keys = array(
-                    'activities',
+                    // 'activities',
                     'piecewise_agent_fee',
                     'supports',
                     'delivery_mode',
-                    // 'activities',
                     'closing_count_down',
                 );
 
@@ -137,10 +136,12 @@ class Welcome extends CI_Controller
                     $keys = array(
                         'limitation',
                         'specifications',
-                        // 'specfoods',
+                        'specfoods',
                         'display_times',
                         'attributes',
                     );
+
+                    $one_food->price = $one_food->specfoods[0]->price;
 
                     foreach ($keys as $one_key) {
                         if (isset($one_food->$one_key)) {
@@ -154,7 +155,7 @@ class Welcome extends CI_Controller
                     //
                     // }
 
-                    $one_food->specfoods = $one_food->specfoods[0]->price;
+
                     $one_food->restaurant_name = $restaurant_name;
 
                     $this->Food_model->add($one_food);
