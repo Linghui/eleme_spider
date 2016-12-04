@@ -22,7 +22,7 @@ class Welcome extends CI_Controller
      */
     public function fetch_restaurant()
     {
-        echo 'ok';
+        $start = time();
 
         $xy_set = array(
             'shui' => 'latitude=41.79239&longitude=123.41845',
@@ -95,6 +95,8 @@ class Welcome extends CI_Controller
             }
             echo 'dealed '.count($restaurants)."\n";
             if (count($restaurants) < $limit) {
+                $end = time();
+                echo($end - $start)." s cost\n";
                 echo "over\n";
                 break;
             }
@@ -103,6 +105,8 @@ class Welcome extends CI_Controller
 
     public function fetch_menu_and_food()
     {
+        $start = time();
+
         $restaurants = $this->Restuarant_model->get_by_condition(null, 'recent_order_num');
 
         foreach ($restaurants as $one) {
@@ -177,5 +181,8 @@ class Welcome extends CI_Controller
                 $this->Menu_model->add($one_menu);
             }
         }
+
+        $end = time();
+        echo($end - $start)." s cost\n";
     }
 }
